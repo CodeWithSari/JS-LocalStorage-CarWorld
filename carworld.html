@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car World</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-sky-100 min-h-screen flex flex-col">
+
+
+  <div class="flex items-center justify-center gap-3 p-4 text-blue-500 shadow bg-white">
+    <img src="https://png.pngtree.com/png-vector/20220711/ourmid/pngtree-automotive-car-logo-png-image_5837187.png" 
+         alt="Car Logo" class="w-16 h-16">
+    <h1 class="text-xl md:text-2xl font-bold">Car World</h1>
+  </div>
+
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 flex-1">
+
+    <!-- Add Car -->
+    <div class="p-6 rounded-xl shadow-lg bg-[url('https://static1.therichestimages.com/wordpress/wp-content/uploads/2023/10/most-expensive-cars-in-the-world.jpg')] bg-cover bg-center relative">
+      <div class="absolute inset-0 bg-black/40 rounded-xl"></div>
+      <div class="relative z-10 text-white">
+        <h2 class="text-xl font-bold mb-4">Add Car Details</h2>
+        <form id="carForm" class="space-y-3">
+          <input type="text" id="carKey" placeholder="Car Key" class="w-full border rounded p-2 text-sm md:text-base text-white">
+          <input type="text" id="carName" placeholder="Car Name" class="w-full border rounded p-2 text-sm md:text-base text-white">
+          <input type="text" id="carModel" placeholder="Car Model" class="w-full border rounded p-2 text-sm md:text-base text-white">
+          <input type="text" id="carPrice" placeholder="Car Price" class="w-full border rounded p-2 text-sm md:text-base text-white">
+          <button type="submit" class="bg-green-400 text-white px-3 py-2 rounded hover:bg-green-600 text-sm md:text-base">Save</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Retrieve Car -->
+    <div class="p-6 rounded-xl shadow-lg bg-[url('https://s1.cdn.autoevolution.com/images/news/these-are-the-most-expensive-cars-in-the-world-that-you-could-theoretically-buy-in-2023-216412_1.jpg')] bg-cover bg-center relative">
+      <div class="absolute inset-0 bg-black/40 rounded-xl"></div>
+      <div class="relative z-10 text-white">
+        <h2 class="text-xl font-bold mb-4">Retrieve Car Details</h2>
+        <div class="flex flex-col sm:flex-row gap-2 mb-4">
+          <input type="text" id="retrieveKey" placeholder="Enter Car Key" class="flex-1 border rounded p-2 text-sm md:text-base text-white">
+          <button id="retrieveBtn" class="bg-blue-400 text-white px-3 py-2 rounded hover:bg-blue-600 text-sm md:text-base">Retrieve</button>
+        </div>
+        <div id="retrieveResult" class="mt-4 text-blue-300 text-sm md:text-base"></div>
+      </div>
+    </div>
+
+    <!-- Delete Car -->
+    <div class="p-6 rounded-xl shadow-lg bg-[url('https://c4.wallpaperflare.com/wallpaper/158/755/624/bugatti-chiron-sport-geneva-motor-show-2018-4k-wallpaper-preview.jpg')] bg-cover bg-center relative">
+      <div class="absolute inset-0 bg-black/40 rounded-xl"></div>
+      <div class="relative z-10 text-white">
+        <h2 class="text-xl font-bold mb-4">Delete Car Record</h2>
+        <div class="flex flex-col sm:flex-row gap-2 mb-4">
+          <input type="text" id="deleteKey" placeholder="Enter Car Key" class="flex-1 border rounded p-2 text-sm md:text-base text-white">
+          <button id="deleteBtn" class="bg-red-400 text-white px-3 py-2 rounded hover:bg-red-600 text-sm md:text-base">Delete</button>
+        </div>
+        <div id="deleteResult" class="mt-4 text-red-300 text-sm md:text-base"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Clear All -->
+  <div class="flex justify-center mb-6">
+    <button id="clearAllBtn" class="bg-sky-400 hover:bg-sky-600 px-6 py-2 rounded text-white shadow-lg">
+      Clear All Records
+    </button>
+  </div>
+
+  <script>
+    // Save
+    const carForm = document.getElementById("carForm");
+    carForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const key = document.getElementById("carKey").value.trim();
+      const name = document.getElementById("carName").value.trim();
+      const model = document.getElementById("carModel").value.trim();
+      const price = document.getElementById("carPrice").value.trim();
+
+      if (!key || !name) {
+        alert("Car Key and Name are required!");
+        return;
+      }
+      const carData = { name, model, price };
+      localStorage.setItem(key, JSON.stringify(carData));
+      alert("Car details saved!");
+      carForm.reset();
+    });
+
+    // Retrieve
+    document.getElementById("retrieveBtn").addEventListener("click", () => {
+      const key = document.getElementById("retrieveKey").value.trim();
+      const data = localStorage.getItem(key);
+      const resultDiv = document.getElementById("retrieveResult");
+
+      if (data) {
+        const car = JSON.parse(data);
+        resultDiv.innerHTML = `
+          <p><strong>Car Key:</strong> ${key}</p>
+          <p><strong>Name:</strong> ${car.name}</p>
+          <p><strong>Model:</strong> ${car.model}</p>
+          <p><strong>Price:</strong> ${car.price}</p>
+        `;
+      } else {
+        resultDiv.textContent = "No car found with this key.";
+      }
+    });
+
+    // Delete
+    document.getElementById("deleteBtn").addEventListener("click", () => {
+      const key = document.getElementById("deleteKey").value.trim();
+      const resultDiv = document.getElementById("deleteResult");
+
+      if (localStorage.getItem(key)) {
+        localStorage.removeItem(key);
+        resultDiv.textContent = `Car with key "${key}" deleted successfully.`;
+      } else {
+        resultDiv.textContent = "No car found with this key.";
+      }
+    });
+
+    // Clear All
+    document.getElementById("clearAllBtn").addEventListener("click", () => {
+      if (confirm("Are you sure you want to clear all car records?")) {
+        localStorage.clear();
+        alert("All car records cleared!");
+        document.getElementById("retrieveResult").textContent = "";
+        document.getElementById("deleteResult").textContent = "";
+        document.getElementById("retrieveKey").value = "";
+        document.getElementById("deleteKey").value = "";
+      }
+    });
+  </script>
+</body>
+</html>
